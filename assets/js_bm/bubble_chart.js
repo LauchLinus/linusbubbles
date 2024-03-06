@@ -162,8 +162,41 @@ var agecatCenters = { // Center locations of the bubbles.
     'mehr als 5h': 900
   };
     
+// Vünfter Button: Sorgenbarometer
+    
+  var sorgenCenters = { // Center locations of the bubbles. 
+    '1': { x: 330, y: height / 1.9  },
+    '2': { x: 450, y: height / 1.9  },
+    '3': { x: 600, y: height / 2  },
+    '4': { x: 750, y: height / 2  }
+    
+  };
 
-       
+  var sorgenTitleX = {  // X locations of the year titles.
+    'Stimmt ganz': 160,
+    'Stimmt eher': 360,
+    'Stimmt eher nicht': 660,
+    'Stimmt gar nicht': 920
+    
+  };
+    
+    // Sechster Button: Bildschirmzeit
+    
+  var verzichtCenters = { // Center locations of the bubbles. 
+    '1': { x: 320, y: height / 2 },
+    '2': { x: 430, y: height / 2 },
+    '3': { x: 550, y: height / 2 },
+    '4': { x: 670, y: height / 2 },
+
+  };
+
+  var verzichtTitleX = {  // X locations of the year titles.
+    'Stimmt ganz': 40,
+    'Stimmt eher': 160,
+    'Stimmt eher nicht': 330,
+    'Stimmt gar nicht': 540,
+    
+  };   
     
 //* ------------------------------------------------------------------
 //
@@ -230,8 +263,13 @@ var agecatCenters = { // Center locations of the bubbles.
           
         sex: d.geschlecht,
           
-       
+       sorgen: d.sorgenbarometerkat, //Sorgen import 1,2,3,4
+       sorgentext: d.sorgenbarometer, // Sorgen import Texte
         
+       verzicht: d.verzichtkat, 
+        verzichttext: d.verzicht,
+          
+          
         x: Math.random() * 900,
         y: Math.random() * 800
       };
@@ -327,8 +365,9 @@ var agecatCenters = { // Center locations of the bubbles.
     hideAgecat();
     hideSex();
     hideScreentime();
-
-    
+    hideSorgen();
+    hideVerzicht();
+      
     force.on('tick', function (e) {
       bubbles.each(moveToCenter(e.alpha))
         .attr('cx', function (d) { return d.x; })
@@ -369,8 +408,9 @@ Die Positionierung basiert auf dem alpha Parameter des force layouts und wird kl
     hideAgecat();
     hideSex();
     hideScreentime();
-
-
+    hideSorgen();
+    hideVerzicht();
+     
     force.on('tick', function (e) {
       bubbles.each(moveToYear(e.alpha))
         .attr('cx', function (d) { return d.x; })
@@ -417,8 +457,9 @@ function moveToYear(alpha) {
     hideYear();
     hideSex();
     hideScreentime();
-
-
+    hideSorgen();
+    hideVerzicht();
+     
     force.on('tick', function (e) {
       bubbles.each(moveToAgecat(e.alpha))
         .attr('cx', function (d) { return d.x; })
@@ -465,8 +506,9 @@ function moveToAgecat(alpha) {
     hideYear();
     hideAgecat();
     hideScreentime();
-
-
+    hideSorgen();
+    hideVerzicht();
+      
     force.on('tick', function (e) {
       bubbles.each(moveToSex(e.alpha))
         .attr('cx', function (d) { return d.x; })
@@ -513,8 +555,9 @@ function moveToAgecat(alpha) {
     hideYear();
     hideSex();
     hideAgecat();
-
-
+    hideSorgen();
+    hideVerzicht();
+      
     force.on('tick', function (e) {
       bubbles.each(moveToScreentime(e.alpha))
         .attr('cx', function (d) { return d.x; })
@@ -552,7 +595,103 @@ function moveToAgecat(alpha) {
 
   
     
+//* ------------------------------------------------------------------
+//
+// Sorgen / sorgenbarometer
+//
+// -----------------------------------------------------------------*/
     
+  function splitBubblesintoSorgen() {
+    showSorgen();
+    hideYear();
+    hideSex();
+    hideAgecat();
+    hideScreentime();
+    hideVerzicht();
+      
+    force.on('tick', function (e) {
+      bubbles.each(moveToSorgen(e.alpha))
+        .attr('cx', function (d) { return d.x; })
+        .attr('cy', function (d) { return d.y; });
+    });
+
+    force.start();
+  }
+
+  function moveToSorgen(alpha) {
+    return function (d) {
+      var target = sorgenCenters[d.sorgen];
+      d.x = d.x + (target.x - d.x) * damper * alpha * 1.1;
+      d.y = d.y + (target.y - d.y) * damper * alpha * 1.1;
+    };
+  }
+
+  function hideSorgen() {
+    svg.selectAll('.sorgen').remove();
+  }
+
+  function showSorgen() {
+
+    var sorgenData = d3.keys(sorgenTitleX);
+    var sorgen = svg.selectAll('.sorgen')
+      .data(sorgenData);
+
+    sorgen.enter().append('text')
+      .attr('class', 'sorgen')
+      .attr('x', function (d) { return sorgenTitleX[d]; })
+      .attr('y', 65)
+      .attr('text-anchor', 'middle')
+      .text(function (d) { return d; });
+    }    
+
+  //* ------------------------------------------------------------------
+//
+// Verzicht / verzichtext
+//
+// -----------------------------------------------------------------*/
+    
+  function splitBubblesintoSorgen() {
+    showVerzicht();
+    hideYear();
+    hideSex();
+    hideAgecat();
+    hideScreentime();
+
+    force.on('tick', function (e) {
+      bubbles.each(moveToVerzicht(e.alpha))
+        .attr('cx', function (d) { return d.x; })
+        .attr('cy', function (d) { return d.y; });
+    });
+
+    force.start();
+  }
+
+  function moveToVerzicht(alpha) {
+    return function (d) {
+      var target = sorgenCenters[d.verzicht];
+      d.x = d.x + (target.x - d.x) * damper * alpha * 1.1;
+      d.y = d.y + (target.y - d.y) * damper * alpha * 1.1;
+    };
+  }
+
+  function hideVerzicht() {
+    svg.selectAll('.verzicht').remove();
+  }
+
+  function showVerzicht() {
+
+    var verzichtData = d3.keys(verzichtTitleX);
+    var verzicht = svg.selectAll('.verzicht')
+      .data(verzichtData);
+
+    verzicht.enter().append('text')
+      .attr('class', 'verzicht')
+      .attr('x', function (d) { return verzichtTitleX[d]; })
+      .attr('y', 65)
+      .attr('text-anchor', 'middle')
+      .text(function (d) { return d; });
+    }    
+        
 //* ------------------------------------------------------------------
 //
 // WISSENSCHAFTSWOCHE F
@@ -578,6 +717,11 @@ function moveToAgecat(alpha) {
       splitBubblesintoSex();
     } else if (displayName === 'screentime') {
       splitBubblesintoScreentime();
+    } else if (displayName === 'sorgen') {
+      splitBubblesintoSorgen();
+    } else if (displayName === 'verzicht') {
+      splitBubblesintoVerzicht();
+    
     } else {
       groupBubbles();
     }
@@ -624,6 +768,11 @@ function moveToAgecat(alpha) {
                   '<span class="name">Bildschirmzeit: </span><span class="value">' +
                   d.screentime +
                   '</span><br/>' +
+          
+                   '<span class="name">"Ich mache mir Sorgen um meine Daten": </span><span class="value">' +
+                  d.sorgentext +
+                  '</span><br/>' +
+        
                   '<span class="name">"Umfragejahr": </span><span class="value">' +
                   d.year +
                   '</span>';
